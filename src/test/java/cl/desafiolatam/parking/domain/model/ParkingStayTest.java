@@ -1,8 +1,11 @@
 package cl.desafiolatam.parking.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
+
+import cl.desafiolatam.parking.domain.exception.InvalidExitTimeException;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,5 +23,21 @@ class ParkingStayTest {
 
         // Assert
         assertEquals(90L, durationInMinutes);
+    }
+
+    @Test
+    void shouldRejectExitTimeBeforeEntryTime() {
+        // Arrange
+        LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
+        LocalDateTime exitTime = LocalDateTime.of(2026, 7, 21, 9, 59);
+        ParkingStay parkingStay = new ParkingStay(entryTime);
+
+        // Act
+        InvalidExitTimeException exception = assertThrows(
+                InvalidExitTimeException.class,
+                () -> parkingStay.calculateDurationInMinutes(exitTime));
+
+        // Assert
+        assertEquals("Exit time cannot be before entry time", exception.getMessage());
     }
 }
