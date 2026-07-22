@@ -7,6 +7,10 @@ public class ParkingFeeCalculator {
             return 0;
         }
 
-        return 1_000;
+        if (durationInMinutes <= 60) {
+            return 1_000;
+        }
+
+        return 1_500;
     }
 }
