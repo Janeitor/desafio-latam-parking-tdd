@@ -113,4 +113,16 @@ class ParkingFeeCalculatorTest {
         // Assert
         assertEquals(4_500, fee);
     }
+
+    @Test
+    void shouldReachMaximumFeeAtFourHundredEightyOneMinutes() {
+        // Arrange
+        ParkingFeeCalculator calculator = new ParkingFeeCalculator();
+
+        // Act
+        int fee = calculator.calculateFee(481L);
+
+        // Assert
+        assertEquals(5_000, fee);
+    }
 }
