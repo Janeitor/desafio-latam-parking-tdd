@@ -28,4 +28,21 @@ public class ParkingService {
         ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
         return repository.save(parkingStay);
     }
+
+    public int checkout(
+            String licensePlate,
+            LocalDateTime exitTime) {
+        ParkingStay parkingStay = repository
+                .findActiveByLicensePlate(licensePlate)
+                .orElseThrow();
+
+        parkingStay.close(exitTime);
+
+        long durationInMinutes =
+                parkingStay.calculateDurationInMinutes(exitTime);
+        int fee = feeCalculator.calculateFee(durationInMinutes);
+
+        repository.save(parkingStay);
+        return fee;
+    }
 }
