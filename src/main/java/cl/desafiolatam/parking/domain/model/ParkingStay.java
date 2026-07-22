@@ -15,9 +15,7 @@ public class ParkingStay {
     }
 
     public void close(LocalDateTime exitTime) {
-        if (exitTime.isBefore(entryTime)) {
-            throw new InvalidExitTimeException();
-        }
+        validateExitTime(exitTime);
         this.exitTime = exitTime;
     }
 
@@ -26,9 +24,13 @@ public class ParkingStay {
     }
 
     public long calculateDurationInMinutes(LocalDateTime exitTime) {
+        validateExitTime(exitTime);
+        return Duration.between(entryTime, exitTime).toMinutes();
+    }
+
+    private void validateExitTime(LocalDateTime exitTime) {
         if (exitTime.isBefore(entryTime)) {
             throw new InvalidExitTimeException();
         }
-        return Duration.between(entryTime, exitTime).toMinutes();
     }
 }
