@@ -15,6 +15,9 @@ public class ParkingStay {
     }
 
     public void close(LocalDateTime exitTime) {
+        if (exitTime.isBefore(entryTime)) {
+            throw new InvalidExitTimeException();
+        }
         this.exitTime = exitTime;
     }
 
