@@ -108,6 +108,40 @@ Las pruebas deben simular este puerto con Mockito, configurar resultados con
 `when(...).thenReturn(...)` y verificar interacciones relevantes con
 `verify(...)`.
 
+## Registro de salida
+
+El registro de salida se realiza mediante el comportamiento planificado:
+
+```java
+public int checkout(
+        String licensePlate,
+        LocalDateTime exitTime)
+```
+
+### Reglas de salida
+
+- Se busca la estadía activa mediante la patente.
+- Si no existe una estadía activa, se debe lanzar
+  `ActiveParkingStayNotFoundException`.
+- El mensaje interno planificado para la excepción es
+  `Active parking stay not found`.
+- La estadía se cierra usando `exitTime`.
+- La duración se calcula en minutos completos.
+- La tarifa se calcula mediante `ParkingFeeCalculator`.
+- La estadía cerrada se guarda usando `ParkingStayRepository`.
+- El método devuelve el monto calculado como `int`.
+- No se procesa ni registra un pago dentro del Hito 1.
+
+### Dependencias del servicio
+
+`ParkingService` recibe mediante su constructor:
+
+- `ParkingStayRepository`, como puerto de persistencia.
+- `ParkingFeeCalculator`, como colaborador del dominio.
+
+Las pruebas deben simular las dependencias necesarias con Mockito y verificar
+sus interacciones relevantes.
+
 ## Metodología de desarrollo
 
 Cada comportamiento debe emerger mediante un ciclo pequeño de TDD:
