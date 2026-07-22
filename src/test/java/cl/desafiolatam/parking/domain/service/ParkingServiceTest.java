@@ -25,7 +25,8 @@ class ParkingServiceTest {
     void shouldSaveAndReturnParkingStayWhenVehicleIsNotParked() {
         // Arrange
         ParkingStayRepository repository = mock(ParkingStayRepository.class);
-        ParkingService service = new ParkingService(repository);
+        ParkingFeeCalculator feeCalculator = mock(ParkingFeeCalculator.class);
+        ParkingService service = new ParkingService(repository, feeCalculator);
         String licensePlate = "ABCD12";
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
         ParkingStay savedStay = new ParkingStay(entryTime);
@@ -48,7 +49,8 @@ class ParkingServiceTest {
     void shouldStoreLicensePlateInNewParkingStay() {
         // Arrange
         ParkingStayRepository repository = mock(ParkingStayRepository.class);
-        ParkingService service = new ParkingService(repository);
+        ParkingFeeCalculator feeCalculator = mock(ParkingFeeCalculator.class);
+        ParkingService service = new ParkingService(repository, feeCalculator);
         String licensePlate = "ABCD12";
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
         ParkingStay savedStay = new ParkingStay(entryTime);
@@ -74,7 +76,8 @@ class ParkingServiceTest {
     void shouldRejectEntryWhenVehicleIsAlreadyParked() {
         // Arrange
         ParkingStayRepository repository = mock(ParkingStayRepository.class);
-        ParkingService service = new ParkingService(repository);
+        ParkingFeeCalculator feeCalculator = mock(ParkingFeeCalculator.class);
+        ParkingService service = new ParkingService(repository, feeCalculator);
         String licensePlate = "ABCD12";
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
         ParkingStay activeStay = new ParkingStay(entryTime);

@@ -9,9 +9,13 @@ import cl.desafiolatam.parking.domain.port.ParkingStayRepository;
 public class ParkingService {
 
     private final ParkingStayRepository repository;
+    private final ParkingFeeCalculator feeCalculator;
 
-    public ParkingService(ParkingStayRepository repository) {
+    public ParkingService(
+            ParkingStayRepository repository,
+            ParkingFeeCalculator feeCalculator) {
         this.repository = repository;
+        this.feeCalculator = feeCalculator;
     }
 
     public ParkingStay registerEntry(
