@@ -31,7 +31,7 @@ class ParkingServiceTest {
         ParkingService service = new ParkingService(repository, feeCalculator);
         String licensePlate = "ABCD12";
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
-        ParkingStay savedStay = new ParkingStay(entryTime);
+        ParkingStay savedStay = new ParkingStay(licensePlate, entryTime);
 
         when(repository.findActiveByLicensePlate(licensePlate))
                 .thenReturn(Optional.empty());
@@ -55,7 +55,7 @@ class ParkingServiceTest {
         ParkingService service = new ParkingService(repository, feeCalculator);
         String licensePlate = "ABCD12";
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
-        ParkingStay savedStay = new ParkingStay(entryTime);
+        ParkingStay savedStay = new ParkingStay(licensePlate, entryTime);
         ArgumentCaptor<ParkingStay> parkingStayCaptor =
                 ArgumentCaptor.forClass(ParkingStay.class);
 
@@ -82,7 +82,7 @@ class ParkingServiceTest {
         ParkingService service = new ParkingService(repository, feeCalculator);
         String licensePlate = "ABCD12";
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
-        ParkingStay activeStay = new ParkingStay(entryTime);
+        ParkingStay activeStay = new ParkingStay(licensePlate, entryTime);
 
         when(repository.findActiveByLicensePlate(licensePlate))
                 .thenReturn(Optional.of(activeStay));

@@ -11,10 +11,6 @@ public class ParkingStay {
     private final LocalDateTime entryTime;
     private LocalDateTime exitTime;
 
-    public ParkingStay(LocalDateTime entryTime) {
-        this(null, entryTime);
-    }
-
     public ParkingStay(
             String licensePlate,
             LocalDateTime entryTime) {
