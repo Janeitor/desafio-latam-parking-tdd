@@ -21,7 +21,7 @@ public class ParkingService {
             throw new VehicleAlreadyParkedException();
         }
 
-        ParkingStay parkingStay = new ParkingStay(entryTime);
+        ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
         return repository.save(parkingStay);
     }
 }
