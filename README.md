@@ -1,8 +1,8 @@
 # Parking TDD
 
-Proyecto educativo desarrollado para el primer hito de Desafío Latam. Modela
-el dominio puro de un estacionamiento y demuestra el ciclo
-RED-GREEN-REFACTOR mediante pruebas unitarias.
+Caso de estudio educativo desarrollado para el primer hito de Desafío Latam.
+Modela el dominio puro de un estacionamiento para practicar TDD. No está
+diseñado para uso real ni para entornos de producción.
 
 ## Dominio de negocio
 
