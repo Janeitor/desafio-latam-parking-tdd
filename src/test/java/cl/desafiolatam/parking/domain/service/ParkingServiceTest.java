@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import cl.desafiolatam.parking.domain.exception.VehicleAlreadyParkedException;
 import cl.desafiolatam.parking.domain.model.ParkingStay;
@@ -41,6 +42,32 @@ class ParkingServiceTest {
         assertSame(savedStay, result);
         verify(repository).findActiveByLicensePlate(licensePlate);
         verify(repository).save(any(ParkingStay.class));
+    }
+
+    @Test
+    void shouldStoreLicensePlateInNewParkingStay() {
+        // Arrange
+        ParkingStayRepository repository = mock(ParkingStayRepository.class);
+        ParkingService service = new ParkingService(repository);
+        String licensePlate = "ABCD12";
+        LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
+        ParkingStay savedStay = new ParkingStay(entryTime);
+        ArgumentCaptor<ParkingStay> parkingStayCaptor =
+                ArgumentCaptor.forClass(ParkingStay.class);
+
+        when(repository.findActiveByLicensePlate(licensePlate))
+                .thenReturn(Optional.empty());
+        when(repository.save(any(ParkingStay.class)))
+                .thenReturn(savedStay);
+
+        // Act
+        service.registerEntry(licensePlate, entryTime);
+
+        // Assert
+        verify(repository).save(parkingStayCaptor.capture());
+        assertEquals(
+                licensePlate,
+                parkingStayCaptor.getValue().getLicensePlate());
     }
 
     @Test
