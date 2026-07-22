@@ -68,11 +68,51 @@ Dentro del Hito 1 no existen:
 - Diferencias por tipo de vehículo.
 - Reinicios de tarifa cada 24 horas.
 
+## Registro de entrada
+
+El registro de entrada se realiza mediante el comportamiento planificado:
+
+```java
+public ParkingStay registerEntry(
+        String licensePlate,
+        LocalDateTime entryTime)
+```
+
+### Reglas de entrada
+
+- La patente identifica al vehículo mediante un `String`.
+- La estadía registra la patente y la fecha y hora de entrada.
+- Una patente solo puede tener una estadía activa.
+- Una estadía está activa mientras no tenga hora de salida.
+- Si la patente ya tiene una estadía activa, se debe lanzar
+  `VehicleAlreadyParkedException`.
+- El mensaje interno planificado para la excepción es
+  `Vehicle is already parked`.
+- El método devuelve la estadía guardada.
+- No se normalizan mayúsculas, espacios ni formato de patente dentro del Hito 1.
+
+### Puerto de persistencia
+
+El dominio depende del puerto `ParkingStayRepository`, cuya implementación no
+forma parte del Hito 1.
+
+Sus operaciones planificadas son:
+
+```java
+Optional<ParkingStay> findActiveByLicensePlate(String licensePlate);
+
+ParkingStay save(ParkingStay parkingStay);
+```
+
+Las pruebas deben simular este puerto con Mockito, configurar resultados con
+`when(...).thenReturn(...)` y verificar interacciones relevantes con
+`verify(...)`.
+
 ## Metodología de desarrollo
 
 Cada comportamiento debe emerger mediante un ciclo pequeño de TDD:
 
 1. RED: escribir una prueba de un solo comportamiento y verificar su fallo.
-2. GREEN: implementar el codigo minimo para que la prueba pase.
+2. GREEN: implementar el código mínimo para que la prueba pase.
 3. REFACTOR: mejorar la estructura solo cuando exista una oportunidad concreta,
    manteniendo todas las pruebas en verde.
