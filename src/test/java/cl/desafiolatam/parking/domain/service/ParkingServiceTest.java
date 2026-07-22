@@ -95,4 +95,33 @@ class ParkingServiceTest {
         verify(repository).findActiveByLicensePlate(licensePlate);
         verify(repository, never()).save(any(ParkingStay.class));
     }
+
+    @Test
+    void shouldCloseSaveAndReturnFeeWhenCheckingOutActiveStay() {
+        // Arrange
+        ParkingStayRepository repository = mock(ParkingStayRepository.class);
+        ParkingFeeCalculator feeCalculator = mock(ParkingFeeCalculator.class);
+        ParkingService service = new ParkingService(repository, feeCalculator);
+        String licensePlate = "ABCD12";
+        LocalDateTime entryTime = LocalDateTime.of(2026, 7, 22, 10, 0);
+        LocalDateTime exitTime = LocalDateTime.of(2026, 7, 22, 11, 30);
+        ParkingStay activeStay = new ParkingStay(licensePlate, entryTime);
+
+        when(repository.findActiveByLicensePlate(licensePlate))
+                .thenReturn(Optional.of(activeStay));
+        when(feeCalculator.calculateFee(90L))
+                .thenReturn(1_500);
+        when(repository.save(activeStay))
+                .thenReturn(activeStay);
+
+        // Act
+        int fee = service.checkout(licensePlate, exitTime);
+
+        // Assert
+        assertEquals(1_500, fee);
+        assertEquals(exitTime, activeStay.getExitTime());
+        verify(repository).findActiveByLicensePlate(licensePlate);
+        verify(feeCalculator).calculateFee(90L);
+        verify(repository).save(activeStay);
+    }
 }
