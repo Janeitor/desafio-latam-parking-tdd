@@ -1,9 +1,9 @@
 package cl.desafiolatam.parking.domain.service;
 
-import cl.desafiolatam.parking.domain.exception.InvalidParkingDurationException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import cl.desafiolatam.parking.domain.exception.InvalidParkingDurationException;
 
 import org.junit.jupiter.api.Test;
 
