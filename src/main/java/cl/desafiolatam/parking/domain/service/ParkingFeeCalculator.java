@@ -11,6 +11,7 @@ public class ParkingFeeCalculator {
             return 1_000;
         }
 
-        return 1_500;
+        long additionalHours = (durationInMinutes - 1) / 60;
+        return 1_000 + (int) (additionalHours * 500);
     }
 }
