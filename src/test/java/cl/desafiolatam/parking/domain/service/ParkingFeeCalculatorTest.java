@@ -1,10 +1,27 @@
 package cl.desafiolatam.parking.domain.service;
 
+import cl.desafiolatam.parking.domain.exception.InvalidParkingDurationException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 class ParkingFeeCalculatorTest {
+
+    @Test
+    void shouldRejectNegativeParkingDuration() {
+        // Arrange
+        ParkingFeeCalculator calculator = new ParkingFeeCalculator();
+
+        // Act
+        InvalidParkingDurationException exception = assertThrows(
+                InvalidParkingDurationException.class,
+                () -> calculator.calculateFee(-1L));
+
+        // Assert
+        assertEquals("Parking duration cannot be negative", exception.getMessage());
+    }
 
     @Test
     void shouldReturnZeroFeeForZeroMinutes() {
