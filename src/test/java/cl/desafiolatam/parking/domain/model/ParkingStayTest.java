@@ -40,4 +40,18 @@ class ParkingStayTest {
         // Assert
         assertEquals("Exit time cannot be before entry time", exception.getMessage());
     }
+
+    @Test
+    void shouldStoreExitTimeWhenClosingParkingStay() {
+        // Arrange
+        LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
+        LocalDateTime exitTime = LocalDateTime.of(2026, 7, 21, 11, 30);
+        ParkingStay parkingStay = new ParkingStay(entryTime);
+
+        // Act
+        parkingStay.close(exitTime);
+
+        // Assert
+        assertEquals(exitTime, parkingStay.getExitTime());
+    }
 }
