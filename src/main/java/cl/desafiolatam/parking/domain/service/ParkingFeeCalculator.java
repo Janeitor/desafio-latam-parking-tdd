@@ -1,8 +1,14 @@
 package cl.desafiolatam.parking.domain.service;
 
+import cl.desafiolatam.parking.domain.exception.InvalidParkingDurationException;
+
 public class ParkingFeeCalculator {
 
     public int calculateFee(long durationInMinutes) {
+        if (durationInMinutes < 0) {
+            throw new InvalidParkingDurationException();
+        }
+
         if (durationInMinutes <= 15) {
             return 0;
         }
