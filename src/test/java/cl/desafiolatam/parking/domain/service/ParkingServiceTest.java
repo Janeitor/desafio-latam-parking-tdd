@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import cl.desafiolatam.parking.domain.exception.ActiveParkingStayNotFoundException;
 import cl.desafiolatam.parking.domain.exception.VehicleAlreadyParkedException;
 import cl.desafiolatam.parking.domain.model.ParkingStay;
 import cl.desafiolatam.parking.domain.port.ParkingStayRepository;
@@ -123,5 +125,29 @@ class ParkingServiceTest {
         verify(repository).findActiveByLicensePlate(licensePlate);
         verify(feeCalculator).calculateFee(90L);
         verify(repository).save(activeStay);
+    }
+
+    @Test
+    void shouldRejectCheckoutWhenActiveParkingStayDoesNotExist() {
+        // Arrange
+        ParkingStayRepository repository = mock(ParkingStayRepository.class);
+        ParkingFeeCalculator feeCalculator = mock(ParkingFeeCalculator.class);
+        ParkingService service = new ParkingService(repository, feeCalculator);
+        String licensePlate = "ABCD12";
+        LocalDateTime exitTime = LocalDateTime.of(2026, 7, 22, 11, 30);
+
+        when(repository.findActiveByLicensePlate(licensePlate))
+                .thenReturn(Optional.empty());
+
+        // Act
+        ActiveParkingStayNotFoundException exception = assertThrows(
+                ActiveParkingStayNotFoundException.class,
+                () -> service.checkout(licensePlate, exitTime));
+
+        // Assert
+        assertEquals("Active parking stay not found", exception.getMessage());
+        verify(repository).findActiveByLicensePlate(licensePlate);
+        verify(repository, never()).save(any(ParkingStay.class));
+        verifyNoInteractions(feeCalculator);
     }
 }
