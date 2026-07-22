@@ -54,4 +54,20 @@ class ParkingStayTest {
         // Assert
         assertEquals(exitTime, parkingStay.getExitTime());
     }
+
+    @Test
+    void shouldRejectExitTimeBeforeEntryWhenClosingParkingStay() {
+        // Arrange
+        LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
+        LocalDateTime exitTime = LocalDateTime.of(2026, 7, 21, 9, 59);
+        ParkingStay parkingStay = new ParkingStay(entryTime);
+
+        // Act
+        InvalidExitTimeException exception = assertThrows(
+                InvalidExitTimeException.class,
+                () -> parkingStay.close(exitTime));
+
+        // Assert
+        assertEquals("Exit time cannot be before entry time", exception.getMessage());
+    }
 }
