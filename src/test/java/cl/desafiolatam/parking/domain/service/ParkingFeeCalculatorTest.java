@@ -19,6 +19,18 @@ class ParkingFeeCalculatorTest {
     }
 
     @Test
+    void shouldReturnZeroFeeForFifteenMinutes() {
+        // Arrange
+        ParkingFeeCalculator calculator = new ParkingFeeCalculator();
+
+        // Act
+        int fee = calculator.calculateFee(15L);
+
+        // Assert
+        assertEquals(0, fee);
+    }
+
+    @Test
     void shouldReturnBaseFeeForSixteenMinutes() {
         // Arrange
         ParkingFeeCalculator calculator = new ParkingFeeCalculator();
