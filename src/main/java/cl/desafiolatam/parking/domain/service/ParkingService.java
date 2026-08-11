@@ -2,6 +2,8 @@ package cl.desafiolatam.parking.domain.service;
 
 import java.time.LocalDateTime;
 
+import cl.desafiolatam.parking.domain.model.LicensePlate;
+
 import cl.desafiolatam.parking.domain.exception.ActiveParkingStayNotFoundException;
 import cl.desafiolatam.parking.domain.exception.VehicleAlreadyParkedException;
 import cl.desafiolatam.parking.domain.model.ParkingStay;
@@ -20,7 +22,7 @@ public class ParkingService {
     }
 
     public ParkingStay registerEntry(
-            String licensePlate,
+            LicensePlate licensePlate,
             LocalDateTime entryTime) {
         if (repository.findActiveByLicensePlate(licensePlate).isPresent()) {
             throw new VehicleAlreadyParkedException();
@@ -31,7 +33,7 @@ public class ParkingService {
     }
 
     public int checkout(
-            String licensePlate,
+            LicensePlate licensePlate,
             LocalDateTime exitTime) {
         ParkingStay parkingStay = repository
                 .findActiveByLicensePlate(licensePlate)

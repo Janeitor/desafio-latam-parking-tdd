@@ -16,7 +16,8 @@ class ParkingStayTest {
         // Arrange
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
         LocalDateTime exitTime = LocalDateTime.of(2026, 7, 21, 11, 30);
-        ParkingStay parkingStay = new ParkingStay("ABCD12", entryTime);
+        LicensePlate licensePlate = new LicensePlate("ABCD12");
+        ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
 
         // Act
         long durationInMinutes = parkingStay.calculateDurationInMinutes(exitTime);
@@ -30,7 +31,8 @@ class ParkingStayTest {
         // Arrange
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
         LocalDateTime exitTime = LocalDateTime.of(2026, 7, 21, 9, 59);
-        ParkingStay parkingStay = new ParkingStay("ABCD12", entryTime);
+        LicensePlate licensePlate = new LicensePlate("ABCD12");
+        ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
 
         // Act
         InvalidExitTimeException exception = assertThrows(
@@ -46,7 +48,8 @@ class ParkingStayTest {
         // Arrange
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
         LocalDateTime exitTime = LocalDateTime.of(2026, 7, 21, 11, 30);
-        ParkingStay parkingStay = new ParkingStay("ABCD12", entryTime);
+        LicensePlate licensePlate = new LicensePlate("ABCD12");
+        ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
 
         // Act
         parkingStay.close(exitTime);
@@ -60,7 +63,8 @@ class ParkingStayTest {
         // Arrange
         LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
         LocalDateTime exitTime = LocalDateTime.of(2026, 7, 21, 9, 59);
-        ParkingStay parkingStay = new ParkingStay("ABCD12", entryTime);
+        LicensePlate licensePlate = new LicensePlate("ABCD12");
+        ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
 
         // Act
         InvalidExitTimeException exception = assertThrows(

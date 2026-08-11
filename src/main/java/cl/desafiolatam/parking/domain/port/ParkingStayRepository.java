@@ -2,11 +2,13 @@ package cl.desafiolatam.parking.domain.port;
 
 import java.util.Optional;
 
+import cl.desafiolatam.parking.domain.model.LicensePlate;
+
 import cl.desafiolatam.parking.domain.model.ParkingStay;
 
 public interface ParkingStayRepository {
 
-    Optional<ParkingStay> findActiveByLicensePlate(String licensePlate);
+    Optional<ParkingStay> findActiveByLicensePlate(LicensePlate licensePlate);
 
     ParkingStay save(ParkingStay parkingStay);
 }

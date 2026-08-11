@@ -7,18 +7,18 @@ import cl.desafiolatam.parking.domain.exception.InvalidExitTimeException;
 
 public class ParkingStay {
 
-    private final String licensePlate;
+    private final LicensePlate licensePlate;
     private final LocalDateTime entryTime;
     private LocalDateTime exitTime;
 
     public ParkingStay(
-            String licensePlate,
+            LicensePlate licensePlate,
             LocalDateTime entryTime) {
         this.licensePlate = licensePlate;
         this.entryTime = entryTime;
     }
 
-    public String getLicensePlate() {
+    public LicensePlate getLicensePlate() {
         return licensePlate;
     }
 
