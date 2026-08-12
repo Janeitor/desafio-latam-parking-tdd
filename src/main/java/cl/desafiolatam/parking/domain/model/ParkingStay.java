@@ -5,17 +5,35 @@ import java.time.LocalDateTime;
 
 import cl.desafiolatam.parking.domain.exception.InvalidExitTimeException;
 
+import java.util.UUID;
+
 public class ParkingStay {
 
     private final LicensePlate licensePlate;
     private final LocalDateTime entryTime;
     private LocalDateTime exitTime;
+    private final ParkingStayId id;
 
     public ParkingStay(
             LicensePlate licensePlate,
             LocalDateTime entryTime) {
+        this(
+                new ParkingStayId(UUID.randomUUID()),
+                licensePlate,
+                entryTime);
+    }
+
+    public ParkingStay(
+            ParkingStayId id,
+            LicensePlate licensePlate,
+            LocalDateTime entryTime) {
+        this.id = id;
         this.licensePlate = licensePlate;
         this.entryTime = entryTime;
+    }
+
+    public ParkingStayId getId() {
+        return id;
     }
 
     public LicensePlate getLicensePlate() {
@@ -40,5 +58,23 @@ public class ParkingStay {
         if (exitTime.isBefore(entryTime)) {
             throw new InvalidExitTimeException();
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (!(object instanceof ParkingStay parkingStay)) {
+            return false;
+        }
+
+        return id.equals(parkingStay.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
