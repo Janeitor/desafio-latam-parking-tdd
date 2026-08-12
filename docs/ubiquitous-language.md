@@ -199,3 +199,23 @@ características de los estacionamientos.
 - Un `ParkingFee` es un monto calculado, no una transacción.
 - La ausencia de una estadía activa no representa disponibilidad de
   espacios.
+
+
+## Aggregate Root
+
+`ParkingStay` is the aggregate root of the Parking Stay Management context.
+
+It protects the lifecycle and consistency of a parking stay by:
+
+- Owning its unique `ParkingStayId`.
+- Associating the stay with a valid `LicensePlate`.
+- Controlling when the stay is closed.
+- Rejecting exit times earlier than the entry time.
+- Calculating the parking duration from its own state.
+
+Rules that require information outside a single parking stay, such as detecting
+another active stay for the same vehicle, are coordinated by a domain service
+through the `ParkingStayRepository` contract.
+
+Fee calculation remains outside the aggregate because it represents a pricing
+policy that can change independently from the parking stay lifecycle.
