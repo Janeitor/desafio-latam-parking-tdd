@@ -203,18 +203,3 @@ El proyecto utiliza ciclos pequeños de TDD:
 Los commits del repositorio registran la evolución desde el dominio inicial
 hacia Value Objects, identidad de entidad, casos de uso y persistencia en
 memoria.
-
-## Fuera del alcance actual
-
-- API REST o controladores web.
-- Integración con el frontend TypeScript/Vite.
-- Spring Boot y Spring Data.
-- JPA u otro ORM.
-- PostgreSQL u otra base de datos real.
-- Docker.
-- Autenticación y autorización.
-- Procesamiento de pagos.
-- Reservas anticipadas y gestión de disponibilidad de espacios.
-
-Estas capacidades pertenecen a etapas posteriores y no forman parte del
-núcleo Java puro implementado hasta este hito.
