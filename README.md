@@ -1,76 +1,132 @@
-# Parking TDD
+# Parking Stay Management
 
-Caso de estudio educativo desarrollado para el primer hito de Desafío Latam.
-Modela el dominio puro de un estacionamiento para practicar TDD. No está
-diseñado para uso real ni para entornos de producción.
+Backend educativo desarrollado en Java puro para modelar la gestión de
+estadías de vehículos en un estacionamiento. El proyecto comenzó como un
+ejercicio de TDD y evolucionó hacia una arquitectura en capas inspirada en
+Domain-Driven Design (DDD), Clean Architecture y Ports and Adapters.
 
-## Dominio de negocio
+El código se mantiene independiente de frameworks, interfaces web y bases de
+datos reales para concentrar el aprendizaje en el dominio, los casos de uso,
+la inversión de dependencias y las pruebas automatizadas.
 
-El sistema cubre dos casos de uso:
+## Alcance del dominio
 
-1. Registrar la entrada de un vehículo.
-2. Registrar su salida y calcular el monto a pagar según la duración de la
-   estadía.
+El contexto delimitado principal es **Parking Stay Management** (Gestión de
+Estadías de Estacionamiento). Actualmente permite:
 
-La política tarifaria y las reglas detalladas del dominio están documentadas
-en [PROJECT.md](PROJECT.md).
+1. Registrar el ingreso de un vehículo.
+2. Impedir que una patente tenga más de una estadía activa.
+3. Registrar la salida del vehículo.
+4. Validar que la salida no sea anterior al ingreso.
+5. Calcular la duración de la estadía.
+6. Calcular la tarifa correspondiente.
+7. Guardar y consultar estadías mediante un contrato de repositorio.
+
+El lenguaje ubicuo, los límites del contexto y la definición del agregado se
+encuentran en
+[docs/ubiquitous-language.md](docs/ubiquitous-language.md). Las reglas de
+negocio y el alcance original también están documentados en
+[PROJECT.md](PROJECT.md).
 
 ## Arquitectura
 
-El proyecto utiliza una arquitectura simple de Ports and Adapters.
+El proyecto separa las responsabilidades en tres capas:
 
-### Estructura del proyecto
+```text
+application ──> domain <── infrastructure
+```
+
+- `domain`: contiene el modelo y las reglas centrales del negocio. No depende
+  de las otras capas ni de frameworks tecnológicos.
+- `application`: contiene casos de uso que coordinan el dominio y dependen de
+  contratos definidos en él.
+- `infrastructure`: contiene detalles intercambiables, como la implementación
+  en memoria del repositorio.
+
+La dirección de las dependencias protege el núcleo del negocio. Los casos de
+uso no conocen la clase de persistencia concreta y la reciben a través de la
+interfaz `ParkingStayRepository`, aplicando inyección por constructor.
+
+## Modelo de dominio
+
+- `ParkingStay`: entidad y Aggregate Root que controla el ciclo de vida de una
+  estadía.
+- `ParkingStayId`: Value Object inmutable que representa la identidad única de
+  cada estadía.
+- `LicensePlate`: Value Object inmutable y auto-validado que representa la
+  patente del vehículo.
+- `ParkingFeeCalculator`: servicio de dominio que encapsula la política
+  tarifaria.
+- `ParkingStayRepository`: contrato puro que define las operaciones de
+  almacenamiento requeridas por la aplicación.
+- Excepciones de dominio: representan violaciones concretas de las reglas de
+  negocio.
+
+La igualdad de `ParkingStay` se basa en `ParkingStayId`, no en sus demás
+atributos. De este modo, un vehículo puede tener diferentes estadías
+históricas, cada una con identidad propia.
+
+## Casos de uso
+
+- `RegisterParkingEntryUseCase`: comprueba que no exista una estadía activa
+  para la patente, crea la nueva entidad y solicita su almacenamiento.
+- `CheckoutParkingStayUseCase`: obtiene la estadía activa, registra la salida,
+  calcula su duración y tarifa, y guarda el estado actualizado.
+
+Ambos casos de uso dependen de `ParkingStayRepository` mediante inyección por
+constructor. El caso de salida recibe además `ParkingFeeCalculator` para
+mantener separada la coordinación de la política tarifaria.
+
+## Persistencia en memoria
+
+`InMemoryParkingStayRepository` implementa el contrato del dominio mediante un
+`ConcurrentHashMap`. Esta implementación permite ejecutar y probar los casos
+de uso sin una base de datos.
+
+Las estadías se almacenan por `ParkingStayId`, porque una misma patente puede
+tener múltiples visitas históricas. Una estadía se considera activa cuando su
+hora de salida todavía no ha sido registrada.
+
+La implementación en memoria es un adaptador educativo y no representa una
+persistencia permanente: sus datos se pierden al finalizar el proceso.
+
+## Estructura del proyecto
 
 ```text
 desafio-latam-parking-tdd/
 ├── docs/
-│   └── images/
-│       └── jacoco-coverage.png
+│   └── ubiquitous-language.md
 ├── src/
-│   ├── main/
-│   │   └── java/cl/desafiolatam/parking/domain/
-│   │       ├── exception/
-│   │       │   ├── ActiveParkingStayNotFoundException.java
-│   │       │   ├── InvalidExitTimeException.java
-│   │       │   ├── InvalidParkingDurationException.java
-│   │       │   └── VehicleAlreadyParkedException.java
-│   │       ├── model/
-│   │       │   └── ParkingStay.java
-│   │       ├── port/
-│   │       │   └── ParkingStayRepository.java
-│   │       └── service/
-│   │           ├── ParkingFeeCalculator.java
-│   │           └── ParkingService.java
-│   └── test/
-│       └── java/cl/desafiolatam/parking/domain/
-│           ├── model/
-│           │   └── ParkingStayTest.java
-│           └── service/
-│               ├── ParkingFeeCalculatorTest.java
-│               └── ParkingServiceTest.java
+│   ├── main/java/cl/desafiolatam/parking/
+│   │   ├── application/
+│   │   │   └── usecase/
+│   │   │       ├── CheckoutParkingStayUseCase.java
+│   │   │       └── RegisterParkingEntryUseCase.java
+│   │   ├── domain/
+│   │   │   ├── exception/
+│   │   │   ├── model/
+│   │   │   │   ├── LicensePlate.java
+│   │   │   │   ├── ParkingStay.java
+│   │   │   │   └── ParkingStayId.java
+│   │   │   ├── repository/
+│   │   │   │   └── ParkingStayRepository.java
+│   │   │   └── service/
+│   │   │       └── ParkingFeeCalculator.java
+│   │   └── infrastructure/
+│   │       └── persistence/
+│   │           └── InMemoryParkingStayRepository.java
+│   └── test/java/cl/desafiolatam/parking/
+│       ├── application/usecase/
+│       ├── domain/
+│       └── infrastructure/persistence/
 ├── AGENTS.md
 ├── PROJECT.md
 ├── README.md
 └── pom.xml
 ```
 
-El directorio `target/` no aparece porque contiene archivos generados por Maven,
-incluido el informe de cobertura, y está excluido del repositorio mediante
-`.gitignore`.
-
-El dominio contiene:
-
-- `ParkingStay`: representa una estadía y sus reglas de duración y cierre.
-- `ParkingFeeCalculator`: calcula la tarifa según los minutos estacionados.
-- `ParkingService`: coordina el registro de entrada y checkout.
-- `ParkingStayRepository`: puerto de salida para persistir estadías.
-- Excepciones personalizadas para violaciones de reglas de negocio.
-
-`ParkingStayRepository` es solo una interfaz del dominio. Este hito no incluye
-una base de datos ni una implementación del repositorio.
-
-El dominio está implementado con Java puro y no depende de Spring, JPA,
-frameworks web ni infraestructura.
+El directorio `target/` contiene artefactos generados por Maven y el informe
+de cobertura. Está excluido del repositorio mediante `.gitignore`.
 
 ## Tecnologías
 
@@ -80,20 +136,43 @@ frameworks web ni infraestructura.
 - Mockito Core
 - JaCoCo
 
-## Ejecutar las pruebas
+No se utilizan Spring, JPA ni otras dependencias de frameworks en el código de
+producción.
 
-Desde la raíz del proyecto:
+## Requisitos
+
+- JDK 25 LTS
+- Maven 3.9 o superior
+
+Comprueba las versiones instaladas con:
+
+```bash
+java --version
+mvn --version
+```
+
+## Compilar el proyecto
+
+Desde la raíz del repositorio:
+
+```bash
+mvn clean compile
+```
+
+## Ejecutar las pruebas
 
 ```bash
 mvn clean test
 ```
 
+La suite actual contiene pruebas unitarias del dominio, los casos de uso y la
+implementación del repositorio en memoria. Las pruebas no utilizan red, base de
+datos ni frameworks externos.
+
 ## Generar el informe de cobertura
 
-Después de ejecutar las pruebas:
-
 ```bash
-mvn jacoco:report
+mvn clean test jacoco:report
 ```
 
 El informe HTML se genera en:
@@ -102,37 +181,40 @@ El informe HTML se genera en:
 target/site/jacoco/index.html
 ```
 
-La siguiente imagen corresponde al informe generado por JaCoCo:
+En PowerShell puede abrirse con:
 
-![Informe JaCoCo con 100% de cobertura de líneas y ramas](docs/images/jacoco-coverage.png)
+```powershell
+Start-Process target\site\jacoco\index.html
+```
 
-La imagen es una evidencia del estado actual. El resultado actualizado siempre
-debe verificarse generando nuevamente el informe con Maven.
+El estado actual alcanza 100 % de cobertura de líneas y ramas en los paquetes
+de producción. El resultado debe verificarse nuevamente después de cada
+cambio, generando el informe con Maven.
 
-El objetivo del dominio es alcanzar 100% de cobertura de líneas y 100% de
-cobertura de ramas con pruebas que representen comportamientos, límites y
-errores reales.
+## Proceso de desarrollo
 
-## Proceso RED-GREEN-REFACTOR
+El proyecto utiliza ciclos pequeños de TDD:
 
-El desarrollo se realizó en ciclos pequeños:
+1. **RED:** escribir una prueba y comprobar que falla por la razón esperada.
+2. **GREEN:** agregar la implementación mínima necesaria para hacerla pasar.
+3. **REFACTOR:** mejorar el diseño sin alterar el comportamiento y manteniendo
+   las pruebas en verde.
 
-1. **RED:** se escribió una prueba para un comportamiento y se comprobó que
-   fallara por la razón esperada.
-2. **GREEN:** se agregó la implementación mínima para hacer pasar la prueba.
-3. **REFACTOR:** cuando existió una mejora concreta, se reorganizó el código
-   sin cambiar su comportamiento y manteniendo las pruebas en verde.
+Los commits del repositorio registran la evolución desde el dominio inicial
+hacia Value Objects, identidad de entidad, casos de uso y persistencia en
+memoria.
 
-El historial Git conserva commits separados para evidenciar estos ciclos.
+## Fuera del alcance actual
 
-## Fuera del alcance
-
-Este hito no incluye:
-
-- Interfaz web o API REST.
-- Menú de consola.
-- Base de datos real.
-- Implementación del repositorio.
-- Autenticación.
+- API REST o controladores web.
+- Integración con el frontend TypeScript/Vite.
+- Spring Boot y Spring Data.
+- JPA u otro ORM.
+- PostgreSQL u otra base de datos real.
+- Docker.
+- Autenticación y autorización.
 - Procesamiento de pagos.
-- Spring u otros frameworks.
+- Reservas anticipadas y gestión de disponibilidad de espacios.
+
+Estas capacidades pertenecen a etapas posteriores y no forman parte del
+núcleo Java puro implementado hasta este hito.
