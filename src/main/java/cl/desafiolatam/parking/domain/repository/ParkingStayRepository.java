@@ -1,4 +1,4 @@
-package cl.desafiolatam.parking.domain.port;
+package cl.desafiolatam.parking.domain.repository;
 
 import java.util.Optional;
 

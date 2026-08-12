@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import cl.desafiolatam.parking.domain.exception.ActiveParkingStayNotFoundException;
 import cl.desafiolatam.parking.domain.model.LicensePlate;
 import cl.desafiolatam.parking.domain.model.ParkingStay;
-import cl.desafiolatam.parking.domain.port.ParkingStayRepository;
+import cl.desafiolatam.parking.domain.repository.ParkingStayRepository;
 import cl.desafiolatam.parking.domain.service.ParkingFeeCalculator;
 
 class CheckoutParkingStayUseCaseTest {

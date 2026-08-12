@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import cl.desafiolatam.parking.domain.exception.VehicleAlreadyParkedException;
 import cl.desafiolatam.parking.domain.model.LicensePlate;
 import cl.desafiolatam.parking.domain.model.ParkingStay;
-import cl.desafiolatam.parking.domain.port.ParkingStayRepository;
+import cl.desafiolatam.parking.domain.repository.ParkingStayRepository;
 
 public class RegisterParkingEntryUseCase {
 
