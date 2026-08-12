@@ -151,6 +151,39 @@ class ParkingStayTest {
 
         // Assert
         assertEquals(true, sameEntity);
+
+        assertEquals(
+                firstParkingStay.hashCode(),
+                secondParkingStay.hashCode());
+    }
+
+    @Test
+    void shouldBeEqualToSameInstance() {
+        // Arrange
+        LicensePlate licensePlate = new LicensePlate("ABCD12");
+        LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
+        ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
+
+        // Act
+        boolean sameEntity = parkingStay.equals(parkingStay);
+
+        // Assert
+        assertEquals(true, sameEntity);
+    }
+
+    @Test
+    void shouldNotBeEqualToDifferentObjectType() {
+        // Arrange
+        LicensePlate licensePlate = new LicensePlate("ABCD12");
+        LocalDateTime entryTime = LocalDateTime.of(2026, 7, 21, 10, 0);
+        ParkingStay parkingStay = new ParkingStay(licensePlate, entryTime);
+        String differentObjectType = "parking-stay";
+
+        // Act
+        boolean sameEntity = parkingStay.equals(differentObjectType);
+
+        // Assert
+        assertEquals(false, sameEntity);
     }
 
 }
